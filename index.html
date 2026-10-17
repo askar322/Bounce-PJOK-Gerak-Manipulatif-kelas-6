@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BounceQuiz AI — PJOK Kelas VI</title>
+<style>
+:root{--navy:#12304a;--green:#18a66a;--lime:#b8ef65;--orange:#ff9d3d;--blue:#39a9db;--paper:#f3f8f5;--ink:#17324a;--muted:#617588;--white:#fff;--red:#d94b54}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 8% 4%,#d8f4e5 0,transparent 26%),radial-gradient(circle at 95% 0,#dcefff 0,transparent 28%),var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+header{padding:22px clamp(16px,4vw,48px) 18px;background:linear-gradient(115deg,#10344b,#176b62);color:#fff;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;width:260px;height:260px;border:28px solid #ffffff12;border-radius:50%;right:-55px;top:-130px}
+.brand{display:flex;align-items:center;gap:14px;position:relative;z-index:1}.logo{width:54px;height:54px;border-radius:17px;background:linear-gradient(145deg,var(--lime),#55d5a0);display:grid;place-items:center;font-size:29px;box-shadow:0 8px 22px #0002}.brand h1{font-size:clamp(25px,4vw,36px);margin:0;letter-spacing:-1px}.brand p{margin:4px 0 0;color:#cbe9e2;font-size:13px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:19px;position:relative;z-index:1}.pill{padding:7px 11px;border:1px solid #ffffff32;background:#ffffff12;border-radius:999px;font-size:12px;color:#f3fffb}
+main{max-width:1240px;margin:auto;padding:22px clamp(12px,3vw,32px) 40px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat{background:#fff;border:1px solid #e0ebe5;border-radius:17px;padding:15px 17px;box-shadow:0 6px 18px #17324a08}.stat .label{font-size:12px;color:var(--muted);font-weight:700}.stat .value{font-size:25px;font-weight:850;margin-top:4px;letter-spacing:-.5px}.stat .sub{font-size:11px;color:#7a8c9a;margin-top:2px}.progress-wrap{height:7px;background:#e8f0ec;border-radius:99px;overflow:hidden;margin-top:9px}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--lime));transition:width .25s}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;align-items:start}.panel{background:#fff;border:1px solid #e0ebe5;border-radius:22px;box-shadow:0 8px 28px #17324a0a;overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid #edf2ef;display:flex;justify-content:space-between;gap:12px;align-items:center}.panel-head h2{margin:0;font-size:18px}.panel-head p{margin:4px 0 0;font-size:12px;color:var(--muted)}.tag{font-size:11px;font-weight:800;padding:6px 9px;background:#e7f8ee;color:#147747;border-radius:99px;white-space:nowrap}
+.playfield{height:470px;position:relative;overflow:hidden;background:linear-gradient(180deg,#dff6e9,#c5ecd8);isolation:isolate}
+.playfield:before{content:"";position:absolute;inset:14px;border:2px solid #ffffffa8;border-radius:13px;pointer-events:none}.field-line{position:absolute;left:50%;top:50%;width:112px;height:112px;border:2px solid #ffffff82;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}.field-line:after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;border-left:2px solid #ffffff82}
+.ball{position:absolute;width:49px;height:49px;border-radius:50%;border:3px solid #ffffffd9;box-shadow:0 5px 12px #12304a28,inset -5px -7px 0 #00000012;display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px;cursor:pointer;user-select:none;transition:transform .15s,filter .15s;z-index:2;touch-action:manipulation}.ball:hover{transform:scale(1.13);filter:brightness(1.08)}.ball:focus-visible{outline:3px solid #12304a;outline-offset:3px}.ball.done{background:#647a88!important;cursor:not-allowed;opacity:.78}.ball.done:after{content:"✓";position:absolute;right:-5px;top:-7px;width:18px;height:18px;background:#fff;color:#16834e;border-radius:50%;font-size:12px;display:grid;place-items:center;border:1px solid #cce7d7}.ball.active{outline:4px solid #17324a;outline-offset:3px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 18px;color:var(--muted);font-size:11px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.side{display:flex;flex-direction:column;gap:14px}.instructions{padding:18px 20px}.instructions h3{margin:0 0 8px;font-size:16px}.instructions p{font-size:13px;line-height:1.6;color:var(--muted);margin:0}.mini-row{display:flex;gap:8px;margin-top:13px}.mini{flex:1;border-radius:12px;padding:10px;background:#f1f8f4;font-size:11px;color:#476455}.mini strong{display:block;font-size:15px;color:#163b2c;margin-bottom:3px}
+.question-panel{display:none}.question-panel.show{display:block}.question-content{padding:19px 20px}.qtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.qnum{font-size:12px;font-weight:800;color:#177a4a;background:#e8f8ef;border-radius:99px;padding:7px 10px}.qtype{font-size:11px;font-weight:800;color:#8b5a17;background:#fff2dc;border-radius:99px;padding:7px 10px}.qtitle{font-size:18px;line-height:1.45;font-weight:800;margin:0 0 13px}.qmeta{font-size:11px;color:var(--muted);margin-bottom:14px}
+.options{display:grid;gap:9px}.option{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;border:1.5px solid #dce8e1;border-radius:13px;padding:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;transition:.15s}.option:hover:not(:disabled){border-color:#62c893;background:#f5fcf7}.option .letter{flex:0 0 26px;height:26px;border-radius:8px;background:#edf3ef;display:grid;place-items:center;font-size:12px;font-weight:900}.option.selected{border-color:#299e67;background:#e9f8ef}.option.correct{border-color:#1d9a5c;background:#e5f8ed}.option.wrong{border-color:#df6269;background:#fff0f0}.option:disabled{cursor:default}.oralbox{width:100%;min-height:86px;border:1px solid #dce8e1;border-radius:13px;padding:12px;font:inherit;resize:vertical}.rubric{background:#f4f8f6;border-radius:12px;padding:12px;margin-top:12px;font-size:12px;line-height:1.55}.rubric summary{cursor:pointer;font-weight:800}.rubric ul{padding-left:18px;margin-bottom:0}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:800;font-size:12px;cursor:pointer;transition:transform .15s,filter .15s}.btn:hover{filter:brightness(.97);transform:translateY(-1px)}.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}.primary{background:var(--green);color:white}.secondary{background:#eaf1ed;color:#355244}.orange{background:#ffb75e;color:#4b2d06}.danger{background:#fff0f0;color:#a52d36}.feedback{display:none;border-radius:13px;padding:13px 14px;margin-top:13px;font-size:13px;line-height:1.55}.feedback.show{display:block}.feedback.good{background:#e8f8ef;color:#12633c}.feedback.bad{background:#fff0f0;color:#92323b}.feedback.neutral{background:#fff5e5;color:#795015}.result{display:none;margin-top:18px}.result.show{display:block}.result-inner{padding:24px}.result h2{font-size:27px;margin:0 0 6px}.result p{color:var(--muted);font-size:13px}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.result-tile{padding:14px;border-radius:14px;background:#f2f8f4}.result-tile small{display:block;color:var(--muted);font-size:11px}.result-tile strong{font-size:22px;display:block;margin-top:4px}.table-wrap{overflow:auto;margin-top:16px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid #e7eeea}th{color:#617588;background:#f7faf8}.hidden{display:none!important}.footer{text-align:center;color:#7d8e99;font-size:11px;padding:20px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.playfield{height:430px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.side{order:2}}
+@media(max-width:480px){header{padding:18px 15px}.logo{width:45px;height:45px}.meta{gap:6px}.pill{font-size:10px}.playfield{height:420px}.ball{width:43px;height:43px;font-size:13px}.panel-head{padding:15px}.question-content{padding:15px}.qtitle{font-size:16px}.stat{padding:12px}.stat .value{font-size:22px}.result-grid{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:white}header{background:#12304a!important;print-color-adjust:exact}.stats,.layout,.footer,.actions,.btn{display:none!important}.result{display:block!important;box-shadow:none;border:1px solid #aaa}.result-inner{padding:8px}.panel{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">🏏</div><div><h1>BounceQuiz <span style="color:#b8ef65">AI</span></h1><p>Belajar aktif · Bergerak · Berpikir · Berprestasi</p></div></div>
+  <div class="meta"><span class="pill">📚 PJOK</span><span class="pill">🎓 Kelas VI SD</span><span class="pill">⚾ Permainan Bola Kasti</span><span class="pill">📝 Asesmen Formatif</span></div>
+</header>
+<main>
+  <section class="stats" aria-label="Progress permainan">
+    <div class="stat"><div class="label">TERJAWAB</div><div class="value"><span id="answered">0</span> <span style="color:#9aaba5;font-size:17px">/ 18</span></div><div class="progress-wrap"><div class="progress" id="progress"></div></div></div>
+    <div class="stat"><div class="label">SOAL TERSISA</div><div class="value" id="remaining">18</div><div class="sub">Bola yang belum diselesaikan</div></div>
+    <div class="stat"><div class="label">JAWABAN BENAR</div><div class="value" id="correctCount">0</div><div class="sub">Pilihan ganda benar</div></div>
+    <div class="stat"><div class="label">NILAI SEMENTARA</div><div class="value"><span id="score">0</span><span style="font-size:14px;color:#82938c"> / 100</span></div><div class="sub">Dari total 1.800 poin</div></div>
+  </section>
+  <div class="layout" id="gameLayout">
+    <section class="panel">
+      <div class="panel-head"><div><h2>⚡ Arena BounceQuiz</h2><p>Klik bola bernomor untuk membuka tantangan.</p></div><span class="tag">18 BOLA</span></div>
+      <div class="playfield" id="playfield" aria-label="Area permainan bola memantul"><div class="field-line"></div></div>
+      <div class="legend"><span><i class="dot" style="background:#18a66a"></i> Belum dijawab</span><span><i class="dot" style="background:#647a88"></i> Selesai ✓</span><span>💡 Satu bola = satu soal</span></div>
+    </section>
+    <aside class="side">
+      <section class="panel instructions"><h3>🎯 Cara Bermain</h3><p>1. Pilih salah satu bola yang bergerak.<br>2. Jawab soal pilihan ganda atau jawab lisan kepada guru.<br>3. Untuk jawaban lisan, guru memilih skor berdasarkan rubrik.<br>4. Selesaikan semua 18 tantangan untuk melihat hasil.</p><div class="mini-row"><div class="mini"><strong>13 soal</strong>Pilihan ganda</div><div class="mini"><strong>5 soal</strong>Jawaban lisan</div></div></section>
+      <section class="panel question-panel" id="questionPanel">
+        <div class="panel-head"><div><h2 id="panelHeading">Soal</h2><p id="panelSub">Pilih jawaban terbaik.</p></div><span class="tag" id="difficulty">MUDAH</span></div>
+        <div class="question-content" id="questionContent"></div>
+      </section>
+    </aside>
+  </div>
+  <section class="panel result" id="resultPanel">
+    <div class="result-inner">
+      <div style="font-size:38px">🏆</div><h2>BounceQuiz Selesai!</h2><p id="resultMessage">Semua tantangan telah diselesaikan. Terus berlatih dan jaga sportivitas!</p>
+      <div class="result-grid">
+        <div class="result-tile"><small>Jumlah soal</small><strong>18</strong></div>
+        <div class="result-tile"><small>Jawaban benar</small><strong id="finalCorrect">0</strong></div>
+        <div class="result-tile"><small>Jawaban salah / belum tepat</small><strong id="finalWrong">0</strong></div>
+        <div class="result-tile"><small>Jawaban lisan cukup tepat</small><strong id="finalPartial">0</strong></div>
+        <div class="result-tile"><small>Total poin</small><strong id="finalPoints">0 / 1800</strong></div>
+        <div class="result-tile"><small>Nilai akhir</small><strong id="finalScore">0 / 100</strong></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="restartBtn">↻ Main Lagi</button><button class="btn secondary" id="printBtn">🖨 Cetak Hasil</button></div>
+      <div class="table-wrap"><table><thead><tr><th>No.</th><th>Jenis</th><th>Ringkasan soal</th><th>Skor</th><th>Status</th></tr></thead><tbody id="resultRows"></tbody></table></div>
+    </div>
+  </section>
+  <div class="footer">BounceQuiz AI · Media Asesmen Formatif PJOK Kelas VI SD · Berlatih dengan aman dan sportif.</div>
+</main>
+<script>
+const questions = [
+{n:1,type:"mc",difficulty:"Mudah",topic:"Jenis gerak",q:"Gerakan berpindah tempat saat berlari menuju tiang hinggap dalam permainan kasti termasuk gerak apa?",options:["Lokomotor","Nonlokomotor","Manipulatif","Relaksasi"],answer:0,explain:"Berlari menyebabkan tubuh berpindah dari satu tempat ke tempat lain, sehingga termasuk gerak lokomotor.",indicator:"Mengidentifikasi gerak lokomotor dalam permainan kasti.",rubric:"Jawaban benar jika siswa mengenali gerak berpindah tempat sebagai lokomotor."},
+{n:2,type:"mc",difficulty:"Mudah",topic:"Jenis gerak",q:"Saat pemain memutar badan dan mengayunkan lengan tanpa berpindah tempat untuk bersiap melempar, gerak utamanya adalah …",options:["Lokomotor","Nonlokomotor","Manipulatif saja","Melompat jauh"],answer:1,explain:"Memutar badan dan mengayunkan lengan tanpa berpindah tempat merupakan gerak nonlokomotor.",indicator:"Mengenali gerak nonlokomotor.",rubric:"Jawaban benar jika siswa memilih nonlokomotor."},
+{n:3,type:"mc",difficulty:"Mudah",topic:"Jenis gerak",q:"Kegiatan melempar dan menangkap bola kasti termasuk gerak …",options:["Lokomotor","Nonlokomotor","Manipulatif","Diam"],answer:2,explain:"Gerak manipulatif melibatkan penguasaan atau pengendalian benda, misalnya melempar dan menangkap bola.",indicator:"Mengidentifikasi gerak manipulatif.",rubric:"Jawaban benar jika siswa memilih manipulatif."},
+{n:4,type:"mc",difficulty:"Mudah",topic:"Lemparan melambung",q:"Lemparan melambung ditandai oleh lintasan bola yang …",options:["Bergulir di permukaan tanah","Membentuk lintasan tinggi seperti busur","Selalu bergerak lurus sejajar tanah","Memantul berkali-kali sebelum sampai"],answer:1,explain:"Lemparan melambung menghasilkan lintasan tinggi seperti busur dan dapat digunakan untuk mengirim bola ke sasaran yang lebih jauh sesuai situasi.",indicator:"Mengenali ciri lintasan lemparan melambung.",rubric:"Jawaban benar jika memilih lintasan tinggi seperti busur."},
+{n:5,type:"mc",difficulty:"Mudah",topic:"Lemparan mendatar",q:"Lemparan mendatar paling tepat digambarkan sebagai lemparan dengan lintasan …",options:["Tinggi dan melengkung","Rendah, relatif lurus, sejajar arah sasaran","Bergulir di tanah","Vertikal ke atas"],answer:1,explain:"Lemparan mendatar diarahkan relatif lurus ke sasaran dengan lintasan rendah, bukan bergulir di tanah.",indicator:"Mengenali ciri lemparan mendatar.",rubric:"Jawaban benar jika memilih lintasan rendah dan relatif lurus."},
+{n:6,type:"mc",difficulty:"Sedang",topic:"Lemparan menggelinding",q:"Bola perlu dikirim menyusuri tanah menuju teman. Teknik yang paling sesuai adalah …",options:["Lemparan melambung","Lemparan mendatar tinggi","Lemparan menggelinding","Lemparan vertikal"],answer:2,explain:"Lemparan menggelinding membuat bola bergerak di sepanjang permukaan tanah menuju sasaran.",indicator:"Memilih teknik lemparan berdasarkan lintasan yang dibutuhkan.",rubric:"Jawaban benar jika memilih lemparan menggelinding."},
+{n:7,type:"mc",difficulty:"Sedang",topic:"Koordinasi gerak",q:"Saat melakukan lemparan mendatar, tindakan yang membantu arah dan ketepatan lemparan adalah …",options:["Memejamkan mata saat melepas bola","Menghadap sasaran, mengoordinasikan langkah dan ayunan lengan","Membelakangi sasaran","Melepaskan bola tanpa memperhatikan teman"],answer:1,explain:"Arah pandangan ke sasaran, koordinasi langkah, putaran badan, dan ayunan lengan membantu ketepatan lemparan.",indicator:"Menentukan koordinasi gerak untuk lemparan akurat.",rubric:"Jawaban benar jika memilih koordinasi tubuh dan arah sasaran."},
+{n:8,type:"mc",difficulty:"Sedang",topic:"Situasi permainan",q:"Teman berada agak jauh dan tidak ada pemain lawan yang menghalangi lintasan tinggi. Lemparan apa yang dapat dipertimbangkan untuk mengirim bola kepadanya?",options:["Lemparan melambung","Menggelinding dengan sangat pelan","Mendorong bola dengan kaki","Melempar ke arah yang berlawanan"],answer:0,explain:"Lemparan melambung dapat digunakan untuk mengirim bola ke teman yang lebih jauh, dengan tetap memperhatikan situasi dan keamanan.",indicator:"Menerapkan pemilihan teknik pada situasi permainan.",rubric:"Jawaban benar jika memilih lemparan melambung."},
+{n:9,type:"mc",difficulty:"Sedang",topic:"Keselamatan",q:"Sebelum melakukan lemparan, hal paling penting untuk menjaga keselamatan adalah …",options:["Melempar sekeras mungkin tanpa melihat","Memastikan area dan arah lemparan aman serta teman siap","Berdiri tepat di belakang pelempar tanpa memberi tanda","Melempar ketika teman sedang membelakangi"],answer:1,explain:"Pemain perlu memeriksa ruang gerak, memastikan teman siap, dan menghindari lemparan ke arah yang membahayakan.",indicator:"Menerapkan prinsip keselamatan saat bermain.",rubric:"Jawaban benar jika memilih memastikan area aman dan teman siap."},
+{n:10,type:"mc",difficulty:"Sedang",topic:"Perbandingan teknik",q:"Apa perbedaan utama lemparan mendatar dan lemparan menggelinding?",options:["Mendatar bergerak relatif lurus di udara, sedangkan menggelinding menyusuri tanah","Keduanya selalu bergulir di tanah","Mendatar selalu melambung tinggi, sedangkan menggelinding terbang","Tidak ada perbedaan lintasan"],answer:0,explain:"Lemparan mendatar bergerak melalui udara dengan lintasan relatif lurus, sedangkan lemparan menggelinding bergerak di permukaan tanah.",indicator:"Membandingkan lintasan dua jenis lemparan.",rubric:"Jawaban benar jika membedakan lintasan di udara dan di tanah."},
+{n:11,type:"mc",difficulty:"Sedang",topic:"Rangkaian gerak",q:"Dalam rangkaian permainan kasti, berlari ke tiang hinggap lalu melempar bola melibatkan …",options:["Gerak lokomotor saja","Gerak manipulatif saja","Gerak lokomotor dan manipulatif","Gerak nonlokomotor saja"],answer:2,explain:"Berlari adalah gerak lokomotor, sedangkan melempar bola adalah gerak manipulatif. Rangkaian permainan dapat menggabungkan beberapa jenis gerak.",indicator:"Mengidentifikasi gabungan jenis gerak.",rubric:"Jawaban benar jika memilih lokomotor dan manipulatif."},
+{n:12,type:"mc",difficulty:"Menantang",topic:"Pengambilan keputusan",q:"Bola perlu dikirim ke teman yang dekat, tetapi ada pemain lain di jalur udara dan ruang di tanah cukup terbuka. Pilihan yang paling masuk akal adalah …",options:["Melempar tinggi tanpa melihat","Mempertimbangkan lemparan menggelinding setelah memastikan jalurnya aman","Melempar ke arah pemain yang tidak siap","Menutup mata dan melempar sekuatnya"],answer:1,explain:"Teknik dipilih sesuai posisi teman, jalur yang tersedia, dan keselamatan. Jika jalur tanah aman, lemparan menggelinding dapat dipertimbangkan.",indicator:"Memilih teknik secara aman berdasarkan situasi.",rubric:"Jawaban benar jika mempertimbangkan lemparan menggelinding dan keamanan jalur."},
+{n:13,type:"mc",difficulty:"Menantang",topic:"Evaluasi teknik",q:"Seorang siswa ingin melakukan lemparan melambung, tetapi bola selalu bergerak rendah. Hal yang paling tepat dilakukan adalah …",options:["Berlatih mengoordinasikan ayunan dan sudut pelepasan bola dengan pengawasan guru","Melempar ke arah teman tanpa melihat","Mengganti tujuan menjadi mengenai teman","Mengayunkan lengan tanpa memegang bola"],answer:0,explain:"Lintasan dipengaruhi oleh arah dan sudut pelepasan serta koordinasi gerak. Latihan bertahap dengan arahan guru membantu memperbaiki teknik.",indicator:"Mengevaluasi perbaikan teknik lemparan.",rubric:"Jawaban benar jika memilih latihan koordinasi dan sudut pelepasan secara aman."},
+{n:14,type:"oral",difficulty:"Mudah",topic:"Jenis gerak",q:"Jelaskan dengan kata-katamu sendiri perbedaan gerak lokomotor, nonlokomotor, dan manipulatif. Berikan satu contoh dari permainan kasti untuk masing-masing.",indicator:"Siswa menjelaskan tiga kategori gerak dan memberikan contoh yang sesuai.",ideal:"Lokomotor adalah gerak berpindah tempat, contohnya berlari ke tiang hinggap. Nonlokomotor adalah gerak tanpa berpindah tempat, contohnya memutar badan saat bersiap melempar. Manipulatif adalah gerak mengendalikan benda, contohnya melempar atau menangkap bola.",rubricItems:["Menjelaskan lokomotor dan contoh (sekitar 1 unsur).","Menjelaskan nonlokomotor dan contoh (sekitar 1 unsur).","Menjelaskan manipulatif dan contoh (sekitar 1 unsur)."],explain:"Ketiga kategori gerak dapat muncul bersama dalam permainan kasti. Berikan contoh yang benar dan sesuai konteks permainan."},
+{n:15,type:"oral",difficulty:"Sedang",topic:"Lemparan melambung",q:"Jelaskan ciri lemparan melambung dan kapan teknik ini dapat digunakan dalam permainan bola kasti.",indicator:"Siswa menyebutkan lintasan tinggi seperti busur dan situasi penggunaan yang sesuai.",ideal:"Lemparan melambung memiliki lintasan tinggi seperti busur. Teknik ini dapat dipertimbangkan untuk mengirim bola ke teman yang lebih jauh, dengan melihat posisi pemain dan memastikan jalur aman.",rubricItems:["Menyebutkan lintasan tinggi atau berbentuk busur.","Menjelaskan contoh penggunaan yang sesuai.","Menyebutkan pertimbangan arah atau keselamatan."],explain:"Lemparan melambung bukan selalu pilihan terbaik; pemain perlu menyesuaikannya dengan jarak, posisi teman, dan situasi permainan."},
+{n:16,type:"oral",difficulty:"Sedang",topic:"Perbandingan teknik",q:"Bandingkan lemparan mendatar dan lemparan menggelinding berdasarkan lintasan bola dan situasi penggunaannya.",indicator:"Siswa membandingkan lintasan kedua lemparan dan mengaitkannya dengan situasi permainan.",ideal:"Lemparan mendatar bergerak relatif lurus di udara menuju sasaran. Lemparan menggelinding bergerak menyusuri tanah. Pilihan bergantung pada posisi teman, ruang yang tersedia, dan keamanan jalur.",rubricItems:["Menjelaskan lintasan lemparan mendatar.","Menjelaskan lintasan lemparan menggelinding.","Mengaitkan pilihan teknik dengan situasi atau keselamatan."],explain:"Kedua teknik memiliki lintasan berbeda. Ketepatan memilih teknik ditentukan oleh sasaran, jalur, dan situasi permainan."},
+{n:17,type:"oral",difficulty:"Menantang",topic:"Koordinasi dan akurasi",q:"Sebutkan langkah-langkah yang dapat kamu lakukan agar lemparan bola kasti lebih terarah dan akurat. Jelaskan minimal tiga hal.",indicator:"Siswa menyebutkan minimal tiga unsur teknik yang relevan dan aman.",ideal:"Menghadap dan memperhatikan sasaran, memegang bola dengan nyaman, mengoordinasikan langkah dan putaran badan, mengayunkan lengan ke arah sasaran, serta melepas bola dengan sudut yang sesuai. Berlatih pada jarak yang tepat dan mengikuti arahan guru.",rubricItems:["Menyebutkan arah pandangan atau posisi tubuh terhadap sasaran.","Menyebutkan koordinasi kaki, badan, atau ayunan lengan.","Menyebutkan pelepasan bola, latihan, atau keselamatan."],explain:"Akurasi berasal dari koordinasi beberapa bagian tubuh dan latihan yang terarah, bukan hanya kekuatan lengan."},
+{n:18,type:"oral",difficulty:"Menantang",topic:"Keselamatan dan keputusan",q:"Dalam permainan, temanmu belum siap menerima bola dan ada siswa lain melintas di jalur lemparan. Apa yang seharusnya kamu lakukan, dan mengapa?",indicator:"Siswa mengutamakan keselamatan, menunda lemparan, memastikan jalur aman, dan berkomunikasi.",ideal:"Saya tidak melempar dulu. Saya memastikan siswa lain keluar dari jalur, memberi tahu teman agar siap, lalu melempar ketika area aman. Ini mencegah bola mengenai orang dan menjaga keselamatan semua pemain.",rubricItems:["Menyatakan tidak melempar saat jalur belum aman.","Menyebutkan komunikasi atau memastikan penerima siap.","Menjelaskan alasan keselamatan."],explain:"Keselamatan lebih penting daripada kecepatan permainan. Pemain perlu berkomunikasi dan memastikan jalur lemparan aman."}
+];
+
+const colors=["#18a66a","#269fcb","#f29b38","#8c75d7","#e56d79","#24a7a0"];
+const field=document.getElementById("playfield"), panel=document.getElementById("questionPanel"), content=document.getElementById("questionContent");
+let ballEls=[], motion=[], raf=0, current=null, results={}, selected=null;
+function makeBalls(){
+ field.querySelectorAll(".ball").forEach(e=>e.remove());ballEls=[];motion=[];
+ const w=field.clientWidth,h=field.clientHeight, r=23;
+ questions.forEach((q,i)=>{
+  const b=document.createElement("button");b.className="ball";b.type="button";b.textContent=q.n;b.setAttribute("aria-label","Bola nomor "+q.n);b.style.background=colors[i%colors.length];
+  let x=20+Math.random()*Math.max(1,w-70),y=25+Math.random()*Math.max(1,h-75);
+  const vx=(Math.random()>.5?1:-1)*(0.75+Math.random()*1.25),vy=(Math.random()>.5?1:-1)*(0.65+Math.random()*1.3);
+  b.addEventListener("click",()=>openQuestion(q.n));field.appendChild(b);ballEls.push(b);motion.push({x,y,vx,vy,r:24});positionBall(i);
+ });
+ cancelAnimationFrame(raf);animate();
+}
+function positionBall(i){const m=motion[i];ballEls[i].style.left=m.x+"px";ballEls[i].style.top=m.y+"px"}
+function animate(){
+ const w=field.clientWidth,h=field.clientHeight;
+ motion.forEach((m,i)=>{m.x+=m.vx;m.y+=m.vy;const maxX=Math.max(0,w-m.r*2),maxY=Math.max(0,h-m.r*2);if(m.x<0){m.x=0;m.vx=Math.abs(m.vx)}if(m.x>maxX){m.x=maxX;m.vx=-Math.abs(m.vx)}if(m.y<0){m.y=0;m.vy=Math.abs(m.vy)}if(m.y>maxY){m.y=maxY;m.vy=-Math.abs(m.vy)}positionBall(i)});
+ raf=requestAnimationFrame(animate);
+}
+function openQuestion(n){
+ if(results[n])return;current=questions[n-1];selected=null;
+ ballEls.forEach((b,i)=>b.classList.toggle("active",i===n-1));
+ panel.classList.add("show");document.getElementById("panelHeading").textContent="Tantangan "+n;
+ document.getElementById("panelSub").textContent=current.type==="mc"?"Pilih satu jawaban yang paling tepat.":"Jawab dengan kata-katamu sendiri; guru memberi skor.";
+ document.getElementById("difficulty").textContent=current.difficulty.toUpperCase();
+ let html=`<div class="qtop"><span class="qnum">SOAL ${n} / 18</span><span class="qtype">${current.type==="mc"?"MULTIPLE CHOICE":"ORAL ANSWER"}</span></div><div class="qmeta">Materi: ${current.topic}</div><h3 class="qtitle">${current.q}</h3>`;
+ if(current.type==="mc"){
+  html+='<div class="options" id="options">'+current.options.map((op,i)=>`<button class="option" data-i="${i}"><span class="letter">${"ABCD"[i]}</span><span>${op}</span></button>`).join("")+'</div><div class="feedback" id="feedback"></div><div class="actions"><button class="btn primary" id="checkBtn" disabled>Periksa Jawaban</button><button class="btn secondary" id="nextBtn" style="display:none">Lanjutkan Bermain →</button></div>';
+ }else{
+  html+=`<p style="font-size:13px;color:#607487;line-height:1.55">Dengarkan jawaban siswa, atau catat jawaban singkatnya di bawah. Guru menilai berdasarkan ketepatan isi, bukan kesamaan kata.</p><textarea class="oralbox" id="oralAnswer" placeholder="Catatan jawaban siswa (opsional)..." aria-label="Catatan jawaban siswa"></textarea><details class="rubric"><summary>Indikator jawaban & panduan guru</summary><p>${current.indicator}</p><strong>Contoh jawaban ideal:</strong><p>${current.ideal}</p><strong>Rubrik pengamatan:</strong><ul>${current.rubricItems.map(x=>`<li>${x}</li>`).join("")}</ul></details><div class="actions" id="oralActions"><button class="btn primary" data-score="100">✓ Sangat Tepat · 100</button><button class="btn orange" data-score="50">◐ Cukup Tepat · 50</button><button class="btn danger" data-score="0">✕ Belum Tepat · 0</button></div><div class="feedback" id="feedback"></div><div class="actions"><button class="btn secondary" id="nextBtn" style="display:none">Lanjutkan Bermain →</button></div>`;
+ }
+ content.innerHTML=html;
+ if(current.type==="mc"){
+  content.querySelectorAll(".option").forEach(btn=>btn.addEventListener("click",()=>{if(results[n])return;selected=Number(btn.dataset.i);content.querySelectorAll(".option").forEach(o=>o.classList.toggle("selected",o===btn));document.getElementById("checkBtn").disabled=false}));
+  document.getElementById("checkBtn").addEventListener("click",gradeMC);
+ }else{
+  content.querySelectorAll("[data-score]").forEach(btn=>btn.addEventListener("click",()=>gradeOral(Number(btn.dataset.score))));
+ }
+}
+function gradeMC(){
+ if(!current||selected===null||results[current.n])return;
+ const q=current,ok=selected===q.answer,score=ok?100:0;const feedback=document.getElementById("feedback");
+ content.querySelectorAll(".option").forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add("correct");if(i===selected&&!ok)b.classList.add("wrong")});
+ document.getElementById("checkBtn").disabled=true;document.getElementById("checkBtn").textContent="Jawaban Terkunci";
+ feedback.className="feedback show "+(ok?"good":"bad");feedback.innerHTML=`<strong>${ok?"Benar! Hebat!":"Belum tepat."}</strong><br>Jawaban benar: <strong>${"ABCD"[q.answer]}. ${q.options[q.answer]}</strong><br>${q.explain}<br><strong>Skor: ${score}/100</strong>`;
+ results[q.n]={score,correct:ok,partial:false,type:q.type,answer:q.options[selected],status:ok?"Benar":"Salah"};finishQuestion(q.n);document.getElementById("nextBtn").style.display="inline-block";
+}
+function gradeOral(score){
+ if(!current||results[current.n])return;const q=current;const note=(document.getElementById("oralAnswer").value||"").trim();
+ results[q.n]={score,correct:score===100,partial:score===50,type:q.type,answer:note||"(Dinilai secara lisan)",status:score===100?"Sangat tepat":score===50?"Cukup tepat":"Belum tepat"};
+ content.querySelectorAll("[data-score]").forEach(b=>b.disabled=true);document.getElementById("oralAnswer").disabled=true;
+ const f=document.getElementById("feedback");f.className="feedback show "+(score===100?"good":score===50?"neutral":"bad");
+ f.innerHTML=`<strong>${score===100?"Sangat tepat!":score===50?"Cukup tepat.":"Ayo berlatih lagi."}</strong><br>${q.explain}<br><strong>Skor: ${score}/100</strong>`;
+ finishQuestion(q.n);document.getElementById("nextBtn").style.display="inline-block";
+}
+function finishQuestion(n){
+ const b=ballEls[n-1];b.classList.add("done");b.classList.remove("active");b.textContent="✓";b.setAttribute("aria-label","Bola "+n+" selesai");b.disabled=true;updateStats();
+}
+function updateStats(){
+ const vals=Object.values(results),done=vals.length,points=vals.reduce((a,r)=>a+r.score,0),score=Math.round(points/18);
+ document.getElementById("answered").textContent=done;document.getElementById("remaining").textContent=18-done;document.getElementById("correctCount").textContent=vals.filter(r=>r.type==="mc"&&r.correct).length;document.getElementById("score").textContent=score;document.getElementById("progress").style.width=(done/18*100)+"%";
+ if(done===18)showResults();
+}
+function showResults(){
+ document.getElementById("gameLayout").classList.add("hidden");panel.classList.remove("show");document.getElementById("resultPanel").classList.add("show");
+ const vals=Object.values(results),points=vals.reduce((a,r)=>a+r.score,0),score=Math.round(points/18),correct=vals.filter(r=>r.type==="mc"&&r.correct).length,partial=vals.filter(r=>r.type==="oral"&&r.score===50).length,wrong=vals.filter(r=>r.score===0).length;
+ document.getElementById("finalCorrect").textContent=correct;document.getElementById("finalWrong").textContent=wrong;document.getElementById("finalPartial").textContent=partial;document.getElementById("finalPoints").textContent=points+" / 1800";document.getElementById("finalScore").textContent=score+" / 100";
+ document.getElementById("resultMessage").textContent=score>=85?"Luar biasa! Kamu menunjukkan pemahaman yang sangat baik. Tetap sportif dan terus berlatih!":score>=70?"Bagus! Kamu sudah memahami banyak hal. Pelajari kembali pembahasan untuk meningkatkan kemampuan.":"Terima kasih sudah berusaha! Gunakan pembahasan sebagai panduan, lalu berlatih lagi bersama guru.";
+ document.getElementById("resultRows").innerHTML=questions.map(q=>{const r=results[q.n];return `<tr><td>${q.n}</td><td>${q.type==="mc"?"Pilihan ganda":"Jawaban lisan"}</td><td>${q.q}</td><td>${r.score}/100</td><td>${r.status}</td></tr>`}).join("");
+}
+content.addEventListener("click",e=>{if(e.target&&e.target.id==="nextBtn"){panel.classList.remove("show");ballEls.forEach(b=>b.classList.remove("active"));current=null;selected=null;if(Object.keys(results).length===18)showResults()}});
+document.getElementById("restartBtn").addEventListener("click",()=>{results={};current=null;selected=null;panel.classList.remove("show");document.getElementById("resultPanel").classList.remove("show");document.getElementById("gameLayout").classList.remove("hidden");makeBalls();updateStats();window.scrollTo({top:0,behavior:"smooth"})});
+document.getElementById("printBtn").addEventListener("click",()=>window.print());
+window.addEventListener("resize",()=>{const w=field.clientWidth,h=field.clientHeight;motion.forEach((m,i)=>{m.x=Math.min(m.x,Math.max(0,w-m.r*2));m.y=Math.min(m.y,Math.max(0,h-m.r*2));positionBall(i)})});
+makeBalls();updateStats();
+</script>
+</body>
+</html>
